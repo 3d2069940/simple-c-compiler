@@ -324,6 +324,85 @@ size_t list_size(const list_t * const list)
   return list->m_length;
 }
 
+list_status_t list_insert_after_iter(list_t * list, list_iter_t * it, const void * value)
+{
+  if (list == NULL)
+    return LIST_FAILURE;
+
+  if (it == NULL)
+    return LIST_FAILURE;
+
+  if (it->m_node == NULL)
+    return LIST_FAILURE;
+
+  if (value == NULL)
+    return LIST_FAILURE;
+
+  list_node_t * new_node     = node_create(list, value);
+  list_node_t * current_node = it->m_node;
+
+  if (new_node == NULL)
+    return LIST_FAILURE | LIST_MALLOC_FAILURE;
+
+  new_node->m_previous = current_node;
+
+  if (current_node == list->m_last_node)
+  {
+    current_node->m_next = new_node;
+    list->m_last_node    = new_node;
+
+    ++list->m_length;
+
+    return LIST_SUCCESS | LIST_VALUE_INSERTED;
+  }
+  current_node->m_next->m_previous = new_node;
+
+  new_node->m_next     = current_node->m_next;
+  current_node->m_next = new_node;
+
+  ++list->m_length;
+
+  return LIST_SUCCESS | LIST_VALUE_INSERTED;
+}
+
+list_status_t list_insert_before_iter(list_t * list, list_iter_t * it, const void * value)
+{
+  if (list == NULL)
+    return LIST_FAILURE;
+
+  if (it == NULL)
+    return LIST_FAILURE;
+
+  if (it->m_node == NULL)
+    return LIST_FAILURE;
+
+  list_node_t * new_node = node_create(list, value);
+  list_node_t * current_node = it->m_node;
+
+  if (new_node == NULL)
+    return LIST_FAILURE | LIST_MALLOC_FAILURE;
+
+  new_node->m_next = current_node;
+
+  if (current_node == list->m_first_node)
+  {
+    current_node->m_previous = new_node;
+    list->m_first_node       = new_node;
+
+    ++list->m_length;
+
+    return LIST_SUCCESS | LIST_VALUE_INSERTED;
+  }
+  current_node->m_previous->m_next = new_node;
+
+  new_node->m_previous = current_node->m_previous;
+  current_node->m_previous = new_node;
+
+  ++list->m_length;
+
+  return LIST_SUCCESS | LIST_VALUE_INSERTED;
+}
+
 list_status_t list_remove(list_t * list, list_iter_t * it)
 {
   if (list == NULL)

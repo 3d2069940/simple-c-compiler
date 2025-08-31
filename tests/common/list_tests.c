@@ -198,6 +198,56 @@ void list_iter_tests(void)
     list_iter_destroy(end);
     list_destroy(list);
   }
+  {
+    list_t * list = list_create(sizeof(int), NULL, NULL);
+
+    assert(list != NULL);
+
+    const int values[] = {0, 1, 2, 3, 4};
+
+    list_push_front(list, &values[0]);
+
+    list_iter_t * it = list_begin(list);
+
+    for (size_t i = 1; i < 5; ++i)
+    {
+      assert(list_insert_after_iter(list, it, &values[i]) >= LIST_SUCCESS);
+      
+      it = list_iter_inc(it);
+
+      assert(list_iter_value(it) != NULL);
+      assert(*(int*)list_iter_value(it) == values[i]);
+
+      it = list_iter_dec(it);
+    }
+    list_iter_destroy(it);
+    list_destroy(list);
+  }
+  {
+    list_t * list = list_create(sizeof(int), NULL, NULL);
+
+    assert(list != NULL);
+
+    const int values[] = {0, 1, 2, 3, 4};
+
+    list_push_front(list, &values[0]);
+
+    list_iter_t * it = list_begin(list);
+
+    for (size_t i = 1; i < 5; ++i)
+    {
+      assert(list_insert_before_iter(list, it, &values[i]) >= LIST_SUCCESS);
+
+      it = list_iter_dec(it);
+
+      assert(list_iter_value(it) != NULL);
+      assert(*(int*)list_iter_value(it) == values[i]);
+
+      it = list_iter_inc(it);
+    }
+    list_iter_destroy(it);
+    list_destroy(list);
+  }
 }
 
 void list_remove_tests(void)

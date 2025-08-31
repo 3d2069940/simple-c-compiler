@@ -50,6 +50,9 @@ int list_empty(const list_t * const list);
 
 size_t list_size(const list_t * const list);
 
+list_status_t list_insert_after_iter(list_t * list, list_iter_t * it, const void * value);
+list_status_t list_insert_before_iter(list_t * list, list_iter_t * it, const void * value);
+
 list_status_t list_remove(list_t * list, list_iter_t * it);
 
 list_iter_t * list_begin(const list_t * list);
