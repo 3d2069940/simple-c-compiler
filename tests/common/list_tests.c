@@ -275,6 +275,38 @@ void list_remove_tests(void)
   }
 }
 
+
+void list_update_value_tests(void)
+{
+  {
+    list_t * list = list_create(sizeof(int), NULL, NULL);
+
+    const int values[] = {0, 1, 2, 3, 4};
+
+    int default_value = 0;
+
+    for (size_t i = 0; i < 5; ++i)
+      list_push_back(list, &default_value);
+
+    list_iter_t * it  = list_begin(list);
+
+    for (size_t i = 0; i < 5; ++i)
+    {
+      assert(list_iter_value(it) != NULL);
+      assert(*(int*)list_iter_value(it) == 0);
+
+      list_update_value(list, it, &values[i]);
+
+      assert(list_iter_value(it) != NULL);
+      assert(*(int*)list_iter_value(it) == values[i]);
+
+      it = list_iter_inc(it);
+    }
+    list_iter_destroy(it);
+    list_destroy(list);
+  }
+}
+
 int main(void)
 {
   printf("Testing is in progress\n");
@@ -285,5 +317,6 @@ int main(void)
   list_pop_back_tests();
   list_iter_tests();
   list_remove_tests();
+  list_update_value_tests();
   printf("Tests completed successfully\n");
 }

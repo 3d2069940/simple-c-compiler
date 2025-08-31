@@ -149,14 +149,14 @@ void list_destroy(list_t * list)
   list_node_t * current_node = list->m_first_node;
   list_node_t * next_node    = NULL;
 
-  while (list->m_length > 0)
+  while (current_node != NULL)
   {
     next_node = current_node->m_next;
     node_destroy(list, current_node);
     current_node = next_node;
-
-    --list->m_length;
   }
+  list->m_length = 0;
+  
   free(list);
 }
 
@@ -322,6 +322,34 @@ int list_empty(const list_t * const list)
 size_t list_size(const list_t * const list)
 {
   return list->m_length;
+}
+
+list_status_t list_update_value(list_t * list, list_iter_t * it, const void * value)
+{
+  if (list == NULL)
+    return LIST_FAILURE;
+
+  if (it == NULL)
+    return LIST_FAILURE;
+
+  if (it->m_node == NULL)
+    return LIST_FAILURE;
+
+  if (value == NULL)
+    return LIST_FAILURE;
+
+  list_node_t * current_node = it->m_node;
+
+  list->m_value_free_func(current_node->m_value);
+
+  current_node->m_value = list->m_value_copy_func ?
+                          list->m_value_copy_func(value) :
+                          value_copy(list, value);
+
+  if (current_node->m_value == NULL)
+    return LIST_FAILURE | LIST_MALLOC_FAILURE;
+
+  return LIST_SUCCESS | LIST_VALUE_UPDATED;
 }
 
 list_status_t list_insert_after_iter(list_t * list, list_iter_t * it, const void * value)
@@ -515,7 +543,8 @@ int list_iter_cmp(const list_iter_t * const a, const list_iter_t * const b)
   if (a->m_node == b->m_node)
     return 0;
 
-  return (a->m_node < b->m_node) ? -1 : 1;
+  // Note: there is no way to compare iterator indices.
+  return 1;
 }
 
 void list_iter_destroy(list_iter_t * it)
