@@ -13,3 +13,8 @@ target_include_directories(common-lib
   PRIVATE
     utility
 )
+
+add_library(common-lib
+  list/list.h
+  list/list.c
+)
