@@ -235,22 +235,22 @@ list_value_t list_iter_value(const list_iter_t * it);
 /**
  * @brief Advances iterator to the next element
  * 
- * @param it Iterator to advance
- * @return The same iterator (for chaining), or NULL if iterator is invalid
+ * @param it Pointer to the iterator to advance
  * 
- * @note If iterator is at the end, it remains unchanged
+ * @note If iterator is at the end, it remains unchanged.
+ *       The iterator pointer is modified in-place.
  */
-list_iter_t * list_iter_inc(list_iter_t * it);
+void list_iter_inc(list_iter_t ** it);
 
 /**
  * @brief Moves iterator to the previous element
  * 
- * @param it Iterator to move
- * @return The same iterator (for chaining), or NULL if iterator is invalid
+ * @param it Pointer to the iterator to move
  * 
- * @note If iterator is at the beginning, it remains unchanged
+ * @note If iterator is at the beginning, it remains unchanged.
+ *       The iterator pointer is modified in-place.
  */
-list_iter_t * list_iter_dec(list_iter_t * it);
+void list_iter_dec(list_iter_t ** it);
 
 /**
  * @brief Compares two iterators

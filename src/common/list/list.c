@@ -500,30 +500,26 @@ list_value_t list_iter_value(const list_iter_t * it)
   return it->m_node->m_value;
 }
 
-list_iter_t * list_iter_inc(list_iter_t * it)
+void list_iter_inc(list_iter_t ** it)
 {
-  if (it == NULL)
-    return NULL;
+  if (*it == NULL)
+    return;
 
-  if (it->m_node == NULL)
-    return it;
+  if ((*it)->m_node == NULL)
+    return;
 
-  it->m_node = it->m_node->m_next;
-
-  return it;
+  (*it)->m_node = (*it)->m_node->m_next;
 }
 
-list_iter_t * list_iter_dec(list_iter_t * it)
+void list_iter_dec(list_iter_t ** it)
 {
   if (it == NULL)
-    return NULL;
+    return;
 
-  if (it->m_node == NULL)
-    return it;
+  if ((*it)->m_node == NULL)
+    return;
 
-  it->m_node = it->m_node->m_previous;
-
-  return it;
+  (*it)->m_node = (*it)->m_node->m_previous;
 }
 
 int list_iter_cmp(const list_iter_t * const a, const list_iter_t * const b)
