@@ -141,6 +141,41 @@ list_t * list_create(
   return new_list;
 }
 
+list_t * list_copy(const list_t * other)
+{
+  if (other == NULL)
+    return NULL;
+
+  list_t * copy = list_create(
+    other->m_value_size,
+    other->m_value_copy_func,
+    other->m_value_free_func
+  );
+
+  if (copy == NULL)
+    return NULL;
+
+  list_iter_t * it = list_begin(other);
+  list_iter_t * end = list_end(other);
+
+  while (list_iter_cmp(it, end))
+  {
+    list_status_t status = list_push_back(copy, list_iter_value(it));
+
+    if (status < LIST_SUCCESS)
+    {
+      list_iter_destroy(it);
+      list_iter_destroy(end);
+      list_destroy(copy);
+      return NULL;
+    }
+    list_iter_inc(&it);
+  }
+  list_iter_destroy(it);
+  list_iter_destroy(end);
+  return copy;
+}
+
 void list_destroy(list_t * list)
 {
   if (list == NULL)

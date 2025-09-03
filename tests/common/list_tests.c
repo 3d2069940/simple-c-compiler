@@ -13,6 +13,53 @@ void create_list_test(void)
   list_destroy(list);
 }
 
+void copy_list_tests(void)
+{
+  {
+    list_t * list = list_create(sizeof(int), NULL, NULL);
+
+    assert(list != NULL);
+
+    list_t * copy = list_copy(list);
+
+    assert(list != NULL);
+
+    list_destroy(copy);
+    list_destroy(list);
+  }
+  {
+    list_t * list = list_create(sizeof(int), NULL, NULL);
+
+    int values[] = {0, 1, 2, 3, 4};
+
+    for (size_t i = 0; i < 5; ++i)
+      list_push_back(list, &values[i]);
+
+    list_t * copy = list_copy(list);
+
+    assert(copy != NULL);
+
+    list_iter_t * it = list_begin(copy);
+    list_iter_t * end = list_end(copy);
+
+    size_t i = 0;
+
+    while (list_iter_cmp(it, end))
+    {
+      assert(list_iter_value(it) != NULL);
+      assert(*(int*)list_iter_value(it) == values[i]);
+      ++i;
+      list_iter_inc(&it);
+    }
+
+    list_iter_destroy(it);
+    list_iter_destroy(end);
+
+    list_destroy(copy);
+    list_destroy(list);
+  }
+}
+
 void list_push_front_test(void)
 {
   list_t * list = list_create(sizeof(int), NULL, NULL);
@@ -164,7 +211,7 @@ void list_iter_tests(void)
       assert(list_iter_value(it) != NULL);
       assert(*(int*)list_iter_value(it) == value);
 
-      it = list_iter_inc(it);
+      list_iter_inc(&it);
     }
     list_iter_destroy(it);
     list_iter_destroy(end);
@@ -191,7 +238,7 @@ void list_iter_tests(void)
       assert(*(int*)list_iter_value(it) == i);
 
       ++i;
-      it = list_iter_inc(it);
+      list_iter_inc(&it);
     }
 
     list_iter_destroy(it);
@@ -213,12 +260,12 @@ void list_iter_tests(void)
     {
       assert(list_insert_after_iter(list, it, &values[i]) >= LIST_SUCCESS);
       
-      it = list_iter_inc(it);
+      list_iter_inc(&it);
 
       assert(list_iter_value(it) != NULL);
       assert(*(int*)list_iter_value(it) == values[i]);
 
-      it = list_iter_dec(it);
+      list_iter_dec(&it);
     }
     list_iter_destroy(it);
     list_destroy(list);
@@ -238,12 +285,12 @@ void list_iter_tests(void)
     {
       assert(list_insert_before_iter(list, it, &values[i]) >= LIST_SUCCESS);
 
-      it = list_iter_dec(it);
+      list_iter_dec(&it);
 
       assert(list_iter_value(it) != NULL);
       assert(*(int*)list_iter_value(it) == values[i]);
 
-      it = list_iter_inc(it);
+      list_iter_inc(&it);
     }
     list_iter_destroy(it);
     list_destroy(list);
@@ -300,7 +347,7 @@ void list_update_value_tests(void)
       assert(list_iter_value(it) != NULL);
       assert(*(int*)list_iter_value(it) == values[i]);
 
-      it = list_iter_inc(it);
+      list_iter_inc(&it);
     }
     list_iter_destroy(it);
     list_destroy(list);
@@ -311,6 +358,7 @@ int main(void)
 {
   printf("Testing is in progress\n");
   create_list_test();
+  copy_list_tests();
   list_push_front_test();
   list_push_back_test();
   list_pop_front_test();
